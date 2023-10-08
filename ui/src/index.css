@@ -1,0 +1,4 @@
+.react-flow__edge.custom-edge{
+	  stroke: #FFFFF; /* Change this color to your desired edge color */
+	stroke-width: 2px; /* Adjust the width of the edge if needed */
+}
