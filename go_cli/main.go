@@ -84,9 +84,9 @@ func main() {
 	// -verbose
 
 	// Определение флагов
-	pFlag := flag.String("p", "", "Continue execution if set")
+	pFlag := flag.String("p", "", "Path to the program to be launched")
 	argFlag := flag.String("arg", "", "Optional argument")
-	secondThread := flag.Bool("st", false, "Optional argument")
+	secondThread := flag.Bool("st", false, "Second launch of the program (what to compare with).")
 
 	// Парсинг аргументов командной строки
 	flag.Parse()
@@ -131,8 +131,6 @@ func main() {
 	// Запускаем команду Radare2 для анализа функций
 	r2p.Cmd("aaaa")
 
-	//base_static, _ := r2p.Cmd("s")
-
 	functions, err := r2p.Cmd("aflj")
 	if err != nil {
 		fmt.Println(err.Error())
@@ -146,21 +144,16 @@ func main() {
 		//offset is base addr in dec
 		offset := substr.Offset
 		base_addr_func := fmt.Sprintf("0x%X", offset)
-		//fmt.Println(base_addr_func)
 
 		// add BAF to breackpoints array
 		breackpoints = append(breackpoints, base_addr_func)
 
-		//dbte <addr> Enable Breakpoint Trace
-		//fmt.Println(calcOffset(int64(offset), base))
 		_, errr := r2p.Cmd("db " + base_addr_func)
 		if errr != nil {
 			fmt.Println(errr.Error())
 		}
 
 		jsonArray = append(jsonArray, CreateJson(base_addr_func, substr.Name))
-
-		//fmt.Println(id)
 
 	}
 
@@ -175,32 +168,14 @@ func main() {
 	base_dinamic, _ := r2p.Cmd("iej")
 	iej := jsonIE(base_dinamic)
 
-	//fmt.Println(iej[0].Baddr)
-
-	// jsonData, err := json.MarshalIndent(jsonArray, "", "  ")
-	// if err != nil {
-	// 	fmt.Println("Ошибка при маршалинге в JSON:", err)
-	// 	return
-	// }
-	// fmt.Println(string(jsonData))
-	// fmt.Println(len(substrings))
-	// dblist, errdblist := r2p.Cmd("db")
-	// if errdblist != nil {
-	// 	fmt.Println(errdblist.Error())
-	// }
-	// fmt.Println(dblist)
-
 	for {
 
 		currentAddress, _ := r2p.Cmd("pdj 1")
-		// 	current, _ := r2p.Cmd("pd 1")
 
-		// 	//current, _ := r2p.Cmd("dcr")
 		if !checkInvalid(currentAddress) {
 			break
 		}
 
-		// 	fmt.Println(current)
 		_, err := r2p.Cmd("dc")
 		if err != nil {
 			fmt.Println(err.Error())
@@ -212,26 +187,21 @@ func main() {
 		if err != nil {
 			fmt.Println(err.Error())
 		}
-		//fmt.Println(items[0].Offset - iej[0].Baddr)
+
 		base_addr_func := fmt.Sprintf("0x%X", items[0].Offset-iej[0].Baddr)
 		trace = append(trace, base_addr_func)
-		//trace = append(trace, calcOffset(items[0].Offset, base))
 
 	}
 
-	//fmt.Println(trace)
-
 	// Разбиваем массив на пары элементов
 	for i := 0; i < len(trace)-1; i++ {
-		//pair := []string{trace[i], trace[i+1]}
-		//fmt.Println(pair)
+
 		newEdge := createEdges(trace[i], trace[i+1], i, color[colorKey])
 		edges = append(edges, newEdge)
 
 	}
 
 	//    save json
-
 	saveJson(fileName, edges)
 
 	// join two files
@@ -267,14 +237,5 @@ func main() {
 		saveJson(fileName, combinedItems)
 
 	}
-
-	//jsonEdges, _ := json.MarshalIndent(edges, "", "  ")
-
-	//fmt.Println(string(jsonEdges))
-
-	// for {
-	// 	userInput(r2p)
-	// }
-	//userInput(r2p)
 
 }
