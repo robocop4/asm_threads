@@ -9,7 +9,10 @@ import ReactFlow, {
   Background,
   MiniMap,
 } from "react-flow-renderer";
-import styles from "../workflow.css";
+
+import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
+// import styles from "../workflow.css";
 // import ReactFlow, {
 //   addEdge,
 //   useNodesState,
@@ -40,6 +43,7 @@ function ReactFlowRenderer(props) {
 
   const [file1, setFile1] = useState(null);
   const [file2, setFile2] = useState(null);
+  const [maxSteps, setMaxSteps] = useState(0);
   const [file3, setFile3] = useState(null);
   const [file1Content, setFile1Content] = useState('');
   const [file2Content, setFile2Content] = useState([]);
@@ -81,6 +85,15 @@ const handleFile2Change = (event) => {
   setFile2(selectedFile);
 };
 
+
+
+const maxStep = edges.reduce((max, edge) => {
+  const step = parseInt(edge.step); // Преобразуем значение "step" в число
+  return step > max ? step : max;
+}, -Infinity); // Начальное значение - отрицательная бесконечность
+
+
+//Нажата кнопка upload
 const handleReadFiles = () => {
   if (file1) {
     const reader1 = new FileReader();
@@ -97,13 +110,25 @@ const handleReadFiles = () => {
   if (file2) {
     const reader2 = new FileReader();
     reader2.onload = (event) => {
-
-
       //TODO:
       const jsonObject = JSON.parse(event.target.result);
       setFile2Content(jsonObject);
       
      setEdges(jsonObject);
+
+    //смотрим самый большой step
+    const maxStep = jsonObject.reduce((max, edge) => {
+      const step = parseInt(edge.step); // Преобразуем значение "step" в число
+      return step > max ? step : max;
+    }, -Infinity); // Начальное значение - отрицательная бесконечность
+    
+
+
+    //обновляем количество шагов в программе
+    setMaxSteps(maxStep);
+    //обнуляем текущий шаг
+    setCurrentEdgeIndex(0);
+    //console.log('Самый большой step:', );
 
     };
     reader2.readAsText(file2);
@@ -121,7 +146,7 @@ const handleReadFiles = () => {
 
 
 
-  const getNodeId = () => Math.random();
+  //const getNodeId = () => Math.random();
   function onInit() {
    // console.log("Logged");
   }
@@ -129,18 +154,10 @@ const handleReadFiles = () => {
 
 
 
-
+    //+1
    function displayCustomNamedNodeModal() {
-
-
-
      // Create a copy of the current edges array
      const updatedEdges = [...edges];
-
-
-
-    
-
      // Update the animated property of the edge at currentEdgeIndex
      updatedEdges.forEach((edge) => {
       if (edge.step == currentEdgeIndex) {
@@ -155,7 +172,7 @@ const handleReadFiles = () => {
      setEdges(updatedEdges);
      console.log(updatedEdges)
      console.log(currentEdgeIndex);
-     setCurrentEdgeIndex((prevIndex) => (prevIndex + 1) % edges.length)
+     setCurrentEdgeIndex((prevIndex) => (prevIndex + 1) % maxStep)
   }
   // function handleCancel() {
   //   setIsModalVisible(false);
@@ -214,24 +231,32 @@ const handleReadFiles = () => {
      
 
 
-      {/* <input type="file" onChange={handleFile1Change} />
-      <input type="file" onChange={handleFile2Change} />
    
-      <button onClick={handleReadFiles} >Upload</button> */}
 
 <ReactFlowProvider>
 
 
 {/* <div  className={styles.workflowWrapper}> */}
-<div  style={exportButtonStyle}>
+        <div  style={exportButtonStyle}>
+
+
+        <Grid container spacing={2}>
+      <Grid item xs={12}>
+        <>
           <input  type="file" onChange={handleFile1Change} /> 
           <input  type="file" onChange={handleFile2Change} /> 
           <button onClick={handleReadFiles} >Upload</button>
+        </>
+      </Grid>
+      <Grid item xs={12}>
+        <>
+            <button onClick={displayCustomNamedNodeModal} >Next</button>
+        </>
+      </Grid>
+    
+    </Grid>
 
 
-          <button onClick={displayCustomNamedNodeModal} >
-            Export
-          </button>
 
           </div>
       <ReactFlow
