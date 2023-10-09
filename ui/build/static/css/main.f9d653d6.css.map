@@ -1,0 +1,1 @@
+{"version":3,"file":"static/css/main.f9d653d6.css","mappings":"AAAA,8BACG,aAAc,CAChB,gBACD","sources":["index.css"],"sourcesContent":[".react-flow__edge.custom-edge{\r\n\t  stroke: #FFFFF; /* Change this color to your desired edge color */\r\n\tstroke-width: 2px; /* Adjust the width of the edge if needed */\r\n}"],"names":[],"sourceRoot":""}
