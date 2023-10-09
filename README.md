@@ -14,8 +14,8 @@
 `go build main.go createJson.go` 
 
 <p>After building, the main executable file will appear in the directory. To run go_cli, run  `./main -p /bin/ls -arg -la`  in the terminal. </p>
-<p>The result will be two files in the current directory: </p>
-- base.json 
+<p>The result will be two files in the current directory:</p>
+- base.json
 - edges1.json
 <p>Let's run ls without arguments and see the differences between function calls.</p>  
 
