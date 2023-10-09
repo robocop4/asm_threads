@@ -13,7 +13,7 @@
 
 `go build main.go createJson.go` 
 
-<p>After building, the main executable file will appear in the directory. To run go_cli, run `./main -p /bin/ls -arg -la` in the terminal. </p>
+<p>After building, the main executable file will appear in the directory. To run go_cli, run  `./main -p /bin/ls -arg -la`  in the terminal. </p>
 <p>The result will be two files in the current directory: `base.json` and `edges1.json`. </p>
 <p>Let's run ls without arguments and see the differences between function calls. `./main -p /bin/ls -st` </p> 
 <p>The result will be a new file in the current directory is  `edges2.json`.</p> 
