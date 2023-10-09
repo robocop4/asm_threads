@@ -20,9 +20,7 @@
   
   and 
   
-  `edges1.json`
-  
-  . </p>
+  `edges1.json`. </p>
 <p>Let's run ls without arguments and see the differences between function calls.</p>  
 
 `./main -p /bin/ls -st` 
