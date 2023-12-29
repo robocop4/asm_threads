@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import ReactFlow, {
   ReactFlowProvider,
   addEdge,
@@ -11,23 +11,15 @@ import ReactFlow, {
 } from "react-flow-renderer";
 
 import Grid from '@mui/material/Grid';
-import Paper from '@mui/material/Paper';
-// import styles from "../workflow.css";
-// import ReactFlow, {
-//   addEdge,
-//   useNodesState,
-//   useEdgesState,
-//   ConnectionLineType,
-//   Controls,
-//   MiniMap,
-// } from "reactflow";
-
-
 
 
 
 import { nodes as initialNodes, edges as initialEdges } from "./elements";
 import { Button, Modal, Input, Form } from "antd";
+
+
+
+
 
 function ReactFlowRenderer(props) {
 
@@ -36,10 +28,11 @@ function ReactFlowRenderer(props) {
  
 //  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
  // const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-
+ const reactFlowWrapper = useRef(null);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges); 
   const [currentEdgeIndex, setCurrentEdgeIndex] = useState(0);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
 
   const [file1, setFile1] = useState(null);
   const [file2, setFile2] = useState(null);
@@ -48,7 +41,14 @@ function ReactFlowRenderer(props) {
   const [file1Content, setFile1Content] = useState('');
   const [file2Content, setFile2Content] = useState([]);
 
+  const desiredX = 100; // Replace with your desired x coordinate
+  const desiredY = 100; // Replace with your desired y coordinate
 
+  useEffect(() => {
+
+    console.log(position);
+    setPosition({ x: desiredX, y: desiredY });
+  }, [desiredX, desiredY]);
 
 //   useEffect(() => {
 //   if (props.file1.length !== 0 && props.file2.length !==0 ) {
@@ -72,6 +72,8 @@ const exportButtonStyle = {
   padding: '12px',
   borderRadius: '5px',
 };
+
+
 
 
 
@@ -127,7 +129,7 @@ const handleReadFiles = () => {
     //обновляем количество шагов в программе
     setMaxSteps(maxStep);
     //обнуляем текущий шаг
-    setCurrentEdgeIndex(0);
+   
     //console.log('Самый большой step:', );
 
     };
@@ -172,14 +174,15 @@ const handleReadFiles = () => {
      setEdges(updatedEdges);
      console.log(updatedEdges)
      console.log(currentEdgeIndex);
+     //scrollToCoordinates(0, 0);
+     setPosition({ x: 0, y: 0 });
      setCurrentEdgeIndex((prevIndex) => (prevIndex + 1) % maxStep)
   }
   // function handleCancel() {
   //   setIsModalVisible(false);
   // }
-   function handleOk(data) {
-  //   onAdd(data.nodeName);
-  // //  setIsModalVisible(false);
+  function handleOk(data) {
+ 
   }
 
 
@@ -267,6 +270,7 @@ const handleReadFiles = () => {
         //onConnect={onConnect}
         onInit={onInit}
         fitView
+        nodeOrigin={[1,1]}
         attributionPosition="bottom-left"
         connectionLineType={ConnectionLineType.SmoothStep}
         
